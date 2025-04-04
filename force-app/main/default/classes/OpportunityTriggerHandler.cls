@@ -64,7 +64,7 @@ public with sharing class OpportunityTriggerHandler {
         for(Opportunity opp : opportunities){
             if(opp.StageName == 'Closed Won'){
                 if(accounts.get(opp.AccountId).Industry == 'Banking'){
-                    opp.addError('Cannot delete a closed won opportunity for a banking account');
+                    opp.addError('Cannot delete closed opportunity');
                 }
             }
             //The above loops resolves the below code since if the stage is 'closed won' the isclosed will be true.
