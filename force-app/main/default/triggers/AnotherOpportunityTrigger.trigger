@@ -19,7 +19,7 @@ https://www.salesforceben.com/12-salesforce-apex-best-practices/
 https://developer.salesforce.com/blogs/developer-relations/2015/01/apex-best-practices-15-apex-commandments
 */
 trigger AnotherOpportunityTrigger on Opportunity (before insert, after insert, before update, after update, before delete, after delete, after undelete) {
-    if (Trigger.isBefore){
+   /*if (Trigger.isBefore){
         if (Trigger.isInsert){
             // Set default Type for new Opportunities
             Opportunity opp = Trigger.new[0];
@@ -76,64 +76,7 @@ trigger AnotherOpportunityTrigger on Opportunity (before insert, after insert, b
         else if (Trigger.isUndelete){
             assignPrimaryContact(Trigger.newMap);
         }
-    }
+    }*/
 
-    /*
-    notifyOwnersOpportunityDeleted:
-    - Sends an email notification to the owner of the Opportunity when it gets deleted.
-    - Uses Salesforce's Messaging.SingleEmailMessage to send the email.
-    */
-    private static void notifyOwnersOpportunityDeleted(List<Opportunity> opps) {
-        List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
-        Set<Id> ownerIds = new Set<Id>();
-        for (Opportunity opp : opps) {
-            ownerIds.add(opp.OwnerId);
-        }
-        Map<Id, String> userEmails = new Map<Id, String>();
-        for (User user : [SELECT Id, Email FROM User WHERE Id IN :ownerIds]) {
-            userEmails.put(user.Id, user.Email);
-        } 
-        for (Opportunity opp : opps){
-            Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-            //String[] toAddresses = new String[] {[SELECT Id, Email FROM User WHERE Id = :opp.OwnerId].Email};
-            mail.setToAddresses(new string[] {userEmails.get(opp.OwnerId)});
-            mail.setSubject('Opportunity Deleted : ' + opp.Name);
-            mail.setPlainTextBody('Your Opportunity: ' + opp.Name +' has been deleted.');
-            mails.add(mail);
-        }        
-        
-        try {
-            Messaging.sendEmail(mails);
-        } catch (Exception e){
-            System.debug('Exception: ' + e.getMessage());
-        }
-    }
-
-    /*
-    assignPrimaryContact:
-    - Assigns a primary contact with the title of 'VP Sales' to undeleted Opportunities.
-    - Only updates the Opportunities that don't already have a primary contact.
-    */
-    private static void assignPrimaryContact(Map<Id,Opportunity> oppNewMap) {        
-        Map<Id, Opportunity> oppMap = new Map<Id, Opportunity>();
-        Set<Id> accountIDs = new Set<Id>();
-        for(Opportunity opp : oppNewMap.values()) {
-            accountIDs.add(opp.AccountId);
-        }
-        Map<Id,Contact> primaryContact = new Map<Id,Contact>();
-        for(Contact con : [SELECT Id, AccountId 
-                           FROM Contact 
-                           WHERE Title = 'VP Sales' AND AccountId in :accountIDs])
-        {
-          primaryContact.put(con.AccountId,con);
-        }
-        for (Opportunity opp : oppNewMap.values()){            
-            if (opp.Primary_Contact__c == null){
-                Opportunity oppToUpdate = new Opportunity(Id = opp.Id);
-                oppToUpdate.Primary_Contact__c = primaryContact.get(opp.AccountId).Id;
-                oppMap.put(opp.Id, oppToUpdate);
-            }
-        }
-        update oppMap.values();
-    }
+   
 }

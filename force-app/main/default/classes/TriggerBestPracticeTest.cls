@@ -289,8 +289,8 @@ public with sharing class TriggerBestPracticeTest {
             System.assertEquals('New Customer', opp.Type, 'Opportunity ' + opp.Name + ' Type is incorrect.');
         }
     }
-
-    @IsTest
+    //Same as testOpportunityTrigger_deleteCloseWonOpportunity
+    /*@IsTest
     private static void testAnotherOpportunityTrigger_validateCloseOpportunity() {
         Account acc = new Account(Name = 'Test Account');
         insert acc;
@@ -334,7 +334,7 @@ public with sharing class TriggerBestPracticeTest {
                 }
             }
         }
-    }
+    }*/
 
     @IsTest
     private static void testAnotherOpportunityTrigger_insertTask() {
